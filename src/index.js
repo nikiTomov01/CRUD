@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, setDoc, doc } from "firebase/firestore";
+import { getFirestore, deleteDoc, setDoc, getDoc, doc, collection, getCountFromServer, getDocs, where, query } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -18,14 +18,62 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 
-async function writeNoteData(titleTxt, descTxt) {
-    await setDoc(doc(db, "Notes", `note: ${titleTxt}`), {
+// do stuff with db
+const db = getFirestore(app);
+const coll = collection(db, "Notes");
+
+
+// const querySnapshot = await getDocs(q);
+// querySnapshot.forEach((doc) => {
+//     console.log(doc.id, " -> ", doc.data());
+//     console.log(doc.id, "has title: ", doc.data().title, " and descript: ", doc.data().description);
+// })
+
+async function writeNoteData(noteId, titleTxt, descTxt) {
+    await setDoc(doc(db, "Notes", `${noteId}`), {
         title: titleTxt,
         description: descTxt
     });
 }
+
+async function deleteNote(noteId) {
+    await deleteDoc(doc(db, "Notes", `${noteId}`));
+}
+
+async function loadNotes() {
+    const q = query(coll);
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((docs) => {
+        const newNote = document.createElement("div");
+        newNote.className = "note";
+        newNote.id = `note-${latestTitle}`;
+
+        var delBtn = document.createElement("button");
+        delBtn.id = "remove-note-btn";
+        delBtn.innerHTML = "X";
+        delBtn.addEventListener("click", () => {
+            console.log("deleted: ", docs.data().title);
+            deleteNote("note-" + docs.data().title);
+        });
+
+        var titleText = document.createElement("h1");
+        titleText.innerHTML = docs.data().title;
+
+        var descriptionText = document.createElement("p");
+        descriptionText.innerHTML = docs.data().description;
+
+        newNote.appendChild(delBtn);
+        newNote.appendChild(titleText);
+        newNote.appendChild(document.createElement("br"));
+        newNote.appendChild(descriptionText);
+        newNote.appendChild(document.createElement("br"));
+
+        noteContainer.appendChild(newNote);
+    })
+}
+
+loadNotes();
 
 const noteContainer = document.getElementById("notes-container");
 
@@ -33,17 +81,23 @@ const addBtn = document.getElementById("add-note-btn");
 addBtn.addEventListener("click", createForm);
 var latestTitle = "";
 var latestDescription = "";
-var noteCount = 0;
+//var noteCount = 0;
 
 function addNote() {
-    //createForm();
-
-    noteCount++; //increment note count
+    //noteCount++; //increment note count
 
     //create new note element
     const newNote = document.createElement("div");
     newNote.className = "note";
-    newNote.id = `note-${noteCount}`;
+    newNote.id = `note-${latestTitle}`;
+    writeNoteData(newNote.id, latestTitle, latestDescription);
+
+    var delBtn = document.createElement("button");
+    delBtn.id = "remove-note-btn";
+    delBtn.innerHTML = "X";
+    delBtn.addEventListener("click", () => {
+        deleteNote(newNote.id);
+    });
 
     var titleText = document.createElement("h1");
     titleText.innerHTML = latestTitle;
@@ -51,6 +105,7 @@ function addNote() {
     var descriptionText = document.createElement("p");
     descriptionText.innerHTML = latestDescription;
 
+    newNote.appendChild(delBtn);
     newNote.appendChild(titleText);
     newNote.appendChild(document.createElement("br"));
     newNote.appendChild(descriptionText);
