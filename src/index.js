@@ -39,6 +39,7 @@ async function writeNoteData(noteId, titleTxt, descTxt) {
 
 async function deleteNote(noteId) {
     await deleteDoc(doc(db, "Notes", `${noteId}`));
+    document.location.reload();
 }
 
 async function loadNotes() {
