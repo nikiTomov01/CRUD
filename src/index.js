@@ -30,19 +30,19 @@ const coll = collection(db, "Notes");
 //     console.log(doc.id, "has title: ", doc.data().title, " and descript: ", doc.data().description);
 // })
 
-async function writeNoteData(noteId, titleTxt, descTxt) {
+async function writeNoteData(noteId, titleTxt, descTxt) { // sets the title and description for a note in the db
     await setDoc(doc(db, "Notes", `${noteId}`), {
         title: titleTxt,
         description: descTxt
     });
 }
 
-async function deleteNote(noteId) {
+async function deleteNote(noteId) { // removes a note from the db
     await deleteDoc(doc(db, "Notes", `${noteId}`));
     document.location.reload();
 }
 
-async function loadNotes() {
+async function loadNotes() { // loads previous notes saved in the db.
     const q = query(coll);
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((docs) => {
@@ -74,7 +74,7 @@ async function loadNotes() {
     })
 }
 
-loadNotes();
+loadNotes(); // called so that every time the page reloads the notes are updated
 
 const noteContainer = document.getElementById("notes-container");
 
@@ -84,7 +84,7 @@ var latestTitle = "";
 var latestDescription = "";
 //var noteCount = 0;
 
-function addNote() {
+function addNote() { // creates a new note adds it to the db and to the note container div.
     //noteCount++; //increment note count
 
     //create new note element
@@ -115,7 +115,7 @@ function addNote() {
     noteContainer.appendChild(newNote);
 }
 
-function createForm() {
+function createForm() { // creates the form ui used to create a note
     const newDiv = document.createElement("div");
 
     newDiv.className = "modal";
@@ -149,7 +149,7 @@ function createForm() {
     document.body.appendChild(newDiv);    
 } 
 
-const removeForm = (child, titleValue, descriptValue) => {
+const removeForm = (child, titleValue, descriptValue) => { // removes the form ui and sets the latest title and description to be used for new note.
     latestTitle = titleValue;
     latestDescription = descriptValue;
     document.body.removeChild(child);
