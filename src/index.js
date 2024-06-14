@@ -48,7 +48,7 @@ async function loadNotes() { // loads previous notes saved in the db.
     querySnapshot.forEach((docs) => {
         const newNote = document.createElement("div");
         newNote.className = "note";
-        newNote.id = `note-${latestTitle}`;
+        newNote.id = `note-${docs.data().title}`;
 
         var delBtn = document.createElement("button");
         delBtn.id = "remove-note-btn";

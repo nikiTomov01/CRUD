@@ -5,5 +5,15 @@
   },
   "dependencies": {
     "firebase": "^10.11.0"
-  }
+  },
+  "name": "crud",
+  "description": "��#\u0000 \u0000C\u0000R\u0000U\u0000D\u0000\r\u0000 \u0000",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
